@@ -1,7 +1,8 @@
 from flask import Flask, request, render_template_string, jsonify, send_file
-import easyocr, cv2, os, re, json, csv, io
+import cv2, os, re, json, csv, io
 from datetime import datetime
 from pathlib import Path
+from rapidocr_onnxruntime import RapidOCR
 import pandas as pd
 
 app = Flask(__name__)
@@ -31,7 +32,7 @@ if Path(STATS_FILE).is_file():
 else:
     stats = DEFAULT_STATS.copy()
 
-reader = easyocr.Reader(['en'], gpu=False)
+reader = RapidOCR()
 
 
 def enhance(path):
@@ -46,8 +47,8 @@ def enhance(path):
 
 def extract_data(path):
     enhance(path)
-    results = reader.readtext(path, paragraph=True)
-    full_text = " ".join([t[1] for t in results]).strip()
+    results, _ = reader(path)
+    full_text = " ".join([t[1] for t in results]).strip() if results else ""
 
     extracted = {
         "name": "Not found",
