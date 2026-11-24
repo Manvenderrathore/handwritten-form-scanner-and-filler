@@ -1,0 +1,10 @@
+venv
+.venv
+.venv/
+~
+submissions.csv
+uploads
+uploads/
+static
+static/
+
